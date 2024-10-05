@@ -1,0 +1,71 @@
+source:
+  source_data_type: "Local File"
+  file_path: "fashion_products.csv" #absolute location of file
+  file_type: "csv"
+  chunk_size: 1000
+  chunk_overlap: 0
+
+embedding:
+  embedding_model: "OpenAI"
+  api_key: "open-ai-key"
+  model_name: "text-embedding-ada-002"
+
+target:
+  target_database: "Neo4j"
+  neo4j_uri: "bolt+s://my-neo4j-uri:7687"
+  username: "neo4j"
+  password: "my-neo4j-password"
+  vector_property: "embedding"
+  vector_dimensions: 1536  # Adjust based on your embedding size
+  similarity_function: "cosine"  # or "euclidean"
+  graph_structure:
+    nodes:
+      - label: "Product"
+        properties:
+          - "ProductID"
+          - "ProductName"
+          - "Brand"
+          - "Price"
+          - "Rating"
+      - label: "User"
+        properties:
+          - "UserID"
+        unique: true
+      - label: "Brand"
+        properties:
+          - "Brand"
+        unique: true
+      - label: "Size"
+        properties:
+          - "Size"
+        unique: true
+      - label: "Color"
+        properties:
+          - "Color"
+        unique: true
+    relationships:
+      - start_node: "Product"
+        end_node: "User"
+        type: "BOUGHT_BY"
+      - start_node: "Product"
+        end_node: "Brand"
+        type: "MADE_BY"
+        unique: true
+      - start_node: "Product"
+        end_node: "Color"
+        type: "HAS_COLOR"
+        unique: true
+      - start_node: "Product"
+        end_node: "Size"
+        type: "HAS_SIZE"
+        unique: true
+      - start_node: "User"
+        end_node: "Size"
+        type: "BOUGHT_SIZE"
+        unique: true
+      - start_node: "User"
+        end_node: "Color"
+        type: "LIKES_COLOR"
+        unique: true
+
+embed_columns: []
